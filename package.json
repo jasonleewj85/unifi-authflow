@@ -1,0 +1,16 @@
+{
+  "name": "unifi-authflow",
+  "version": "1.0.0",
+  "description": "Unifi Authentication + Authorization SDK",
+  "main": "index.js",
+  "repository": "https://bitbucket.org/tmunifi/unifi-authflow.git",
+  "author": "KayRules",
+  "license": "MIT",
+  "dependencies": {
+    "@ptomasroos/react-native-idfa": "^2.1.0",
+    "axios": "^0.18.0",
+    "react-native-fbsdk": "^0.7.0",
+    "react-native-google-signin": "^1.0.0-rc2",
+    "react-native-modal": "^5.0.0"
+  }
+}
