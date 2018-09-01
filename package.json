@@ -1,6 +1,6 @@
 {
   "name": "unifi-authflow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unifi Authentication + Authorization SDK",
   "main": "index.js",
   "repository": "https://bitbucket.org/tmunifi/unifi-authflow.git",

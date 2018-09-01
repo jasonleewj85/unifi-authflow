@@ -11,6 +11,7 @@ import {
   ScrollView,
   Dimensions,
   PixelRatio,
+  NetInfo,
 } from 'react-native';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { GoogleSignin } from 'react-native-google-signin';
@@ -37,75 +38,82 @@ export default class Register extends Component {
   }
 
   onRegister = () => {
-    if (this.state.password !== this.state.confirmPassword) {
-      this.setState({
-        errorMsg: 'Confirm password did not match.',
-      });
-    } else {
-      this.setState({
-        errorMsg: '',
-      });
-
-      const http = axios.create({
-        baseURL: API.baseURL,
-        timeout: 10000,
-        headers: {
-          Accept: API.acceptHeader,
-          'Content-Type': API.contentType,
-        },
-      });
-      const params = {
-        method: 'POST',
-        url: API.account.register,
-        responseType: 'json',
-        data: {
-          name: this.state.fullName,
-          username: this.state.email,
-          email: this.state.email,
-          password: this.state.password,
-          avatar: this.state.avatarURL,
-          idfa: this.props.idfa,
-        },
-      };
-  
-      // console.log(params);
-      http
-        .request(params)
-        .then(response => {
-          console.log('response: ', response);
-          this.props.onToggleLogin(response.data.response);
-        })
-        .catch(error => {
-          console.log('error: ', error.response);
-          if (typeof error.response.data.error_message === 'string') {
-            this.setState({
-              errorMsg: error.response.data.error_message,
-            });
-          } else {
-            const msgs = Object.keys(error.response.data);
-            const arr = [];
-            msgs.forEach(msg => {
-              console.log(error.response.data[msg][0]);
-              if (error.response.data[msg][0] === 'validation.required') {
-                arr.push('Please enter your ' + msg);
-              } else if (error.response.data[msg][0] === 'validation.email') {
-                arr.push('Please enter a valid email address');
-              } else if (error.response.data[msg][0] === 'validation.min.string') {
-                arr.push('Password must contains 8 characters');
+    NetInfo.getConnectionInfo().then((connectionInfo) => {
+      if (connectionInfo.type !== 'none') {
+        if (this.state.password !== this.state.confirmPassword) {
+          this.setState({
+            errorMsg: 'Confirm password did not match.',
+          });
+        } else {
+          this.setState({
+            errorMsg: '',
+          });
+    
+          const http = axios.create({
+            baseURL: API.baseURL,
+            timeout: 10000,
+            headers: {
+              Accept: API.acceptHeader,
+              'Content-Type': API.contentType,
+            },
+          });
+          const params = {
+            method: 'POST',
+            url: API.account.register,
+            responseType: 'json',
+            data: {
+              name: this.state.fullName,
+              username: this.state.email,
+              email: this.state.email,
+              password: this.state.password,
+              avatar: this.state.avatarURL,
+              idfa: this.props.idfa,
+            },
+          };
+      
+          // console.log(params);
+          http
+            .request(params)
+            .then(response => {
+              console.log('response: ', response);
+              this.props.onToggleLogin(response.data.response);
+            })
+            .catch(error => {
+              console.log('error: ', error.response);
+              if (typeof error.response.data.error_message === 'string') {
+                this.setState({
+                  errorMsg: error.response.data.error_message,
+                });
               } else {
-                arr.push('- ' + msg + ': ' + error.response.data[msg][0]);
+                const msgs = Object.keys(error.response.data);
+                const arr = [];
+                msgs.forEach(msg => {
+                  console.log(error.response.data[msg][0]);
+                  if (error.response.data[msg][0] === 'validation.required') {
+                    arr.push('Please enter your ' + msg);
+                  } else if (error.response.data[msg][0] === 'validation.email') {
+                    arr.push('Please enter a valid email address');
+                  } else if (error.response.data[msg][0] === 'validation.min.string') {
+                    arr.push('Password must contains 8 characters');
+                  } else {
+                    arr.push('- ' + msg + ': ' + error.response.data[msg][0]);
+                  }
+                });
+                const newArr = arr.join('\n');
+                this.setState({
+                  errorMsg: newArr,
+                });
               }
             });
-            const newArr = arr.join('\n');
-            this.setState({
-              errorMsg: newArr,
-            });
-          }
+      
+          Keyboard.dismiss();
+        }
+      } else {
+        this.setState({
+          errorMsg: 'Oops, There is no internet connection.',
         });
-  
-      Keyboard.dismiss();
-
-    }
+      }
+    });
   };
 
   onRegisterGoogle = async () => {
@@ -392,7 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     borderWidth: 1,
     borderColor: '#ddd',
-    paddingVertical: hdpi ? 2 : 6,
+    paddingVertical: hdpi ? 2 : 10,
     paddingHorizontal: 10,
     marginTop: hdpi ? 6 : 8,
     borderRadius: 3,
@@ -401,9 +409,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   socialButton: {
-    marginTop: hdpi ? 10 : 20,
+    marginTop: hdpi ? 10 : 18,
     width: '48%',
-    paddingVertical: hdpi ? 5 : 10,
+    paddingVertical: hdpi ? 5 : 9,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,
