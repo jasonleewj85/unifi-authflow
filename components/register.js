@@ -38,8 +38,8 @@ export default class Register extends Component {
   }
 
   onRegister = () => {
-    NetInfo.getConnectionInfo().then((connectionInfo) => {
-      if (connectionInfo.type !== 'none') {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
         if (this.state.password !== this.state.confirmPassword) {
           this.setState({
             errorMsg: 'Confirm password did not match.',

@@ -55,8 +55,8 @@ export default class Login extends Component {
       },
     };
 
-    NetInfo.getConnectionInfo().then((connectionInfo) => {
-      if (connectionInfo.type !== 'none') {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
         console.log(params);
         http
           .request(params)

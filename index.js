@@ -63,8 +63,8 @@ export default class AuthFlow extends Component {
   }
 
   getClientCredentialToken = (idfa) => {
-    NetInfo.getConnectionInfo().then((connectionInfo) => {
-      if (connectionInfo.type !== 'none') {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
         const http = axios.create({
           baseURL: API.baseURL,
           timeout: 10000,
