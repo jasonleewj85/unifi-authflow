@@ -9,6 +9,7 @@ import {
   Dimensions,
   PixelRatio,
   Platform,
+  NetInfo,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { IDFA } from '@ptomasroos/react-native-idfa';
@@ -62,32 +63,36 @@ export default class AuthFlow extends Component {
   }
 
   getClientCredentialToken = (idfa) => {
-    const http = axios.create({
-      baseURL: API.baseURL,
-      timeout: 10000,
-      headers: {
-        Accept: API.acceptHeader,
-        'Content-Type': API.contentType,
-      },
-    });
-    const params = {
-      method: 'POST',
-      url: API.auth.token,
-      responseType: 'json',
-      data: {
-        client_id: this.props.clientId,
-        client_secret: this.props.clientSecret,
-        grant_type: 'client_credentials',
-        scope: 'device',
-      },
-    };
-
-    http.request(params).then(response => {
-      console.log('cc at: ', response.data.access_token);
-      this.setState({ accessToken: response.data.access_token });
-      this.checkIdfa(idfa);
-    }).catch(error => {
-      console.log('error: ', error);
+    NetInfo.getConnectionInfo().then((connectionInfo) => {
+      if (connectionInfo.type !== 'none') {
+        const http = axios.create({
+          baseURL: API.baseURL,
+          timeout: 10000,
+          headers: {
+            Accept: API.acceptHeader,
+            'Content-Type': API.contentType,
+          },
+        });
+        const params = {
+          method: 'POST',
+          url: API.auth.token,
+          responseType: 'json',
+          data: {
+            client_id: this.props.clientId,
+            client_secret: this.props.clientSecret,
+            grant_type: 'client_credentials',
+            scope: 'device',
+          },
+        };
+    
+        http.request(params).then(response => {
+          console.log('cc at: ', response.data.access_token);
+          this.setState({ accessToken: response.data.access_token });
+          this.checkIdfa(idfa);
+        }).catch(error => {
+          console.log('error: ', error);
+        });
+      }
     });
   }
 
