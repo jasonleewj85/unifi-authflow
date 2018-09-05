@@ -115,7 +115,7 @@ export default class Login extends Component {
         <Text style={styles.pageTitle}>Unifi Login</Text>
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          placeholder="Email"
           value={this.state.username}
           onChangeText={this.changeUsername}
           underlineColorAndroid="rgba(0,0,0,0)"
