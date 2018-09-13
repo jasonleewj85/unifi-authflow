@@ -7,6 +7,7 @@ export default {
   contentType: 'application/json',
   auth: {
     token: '/oauth/token',
+    login: '/oauth/login',
   },
   user: {
     // register: '/user/register',

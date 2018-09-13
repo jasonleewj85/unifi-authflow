@@ -44,7 +44,7 @@ export default class Login extends Component {
     });
     const params = {
       method: 'POST',
-      url: API.auth.token,
+      url: API.auth.login,
       responseType: 'json',
       data: {
         username: this.state.username,
@@ -52,6 +52,7 @@ export default class Login extends Component {
         client_id: this.props.clientId,
         client_secret: this.props.clientSecret,
         grant_type: 'password',
+        idfa: this.props.idfa,
       },
     };
 
